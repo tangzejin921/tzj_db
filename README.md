@@ -28,7 +28,7 @@ flutter 调用android 的 sqlite
 - pub 加入
     ```pub
     dev_dependencies:
-      android_intent:
+      tzj_db:
         git:
           url: git://github.com/tzjandroid/tzj_db.git
           path: tzj_db/src/flutter
