@@ -24,7 +24,7 @@ allprojects {
         }
     }
 }
-rootProject.extensions.add("tzj_db",Type.isAPP.name())
+rootProject.extensions.add("tzj_db",Type.isModule.name())
 enum Type{
     isAPP,
     isModule,
