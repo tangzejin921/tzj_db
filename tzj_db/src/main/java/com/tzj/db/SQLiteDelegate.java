@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tzj.db.info.IDbinfo;
+import com.tzj.db.info.ITabInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +19,13 @@ public class SQLiteDelegate extends SQLiteOpenHelper {
     public static void init(Context ctx){
         mAppCtx = ctx.getApplicationContext();
     }
-    private ISqlite sqlite;
+    private ITabInfo sqlite;
+    private IDbinfo upgrade;
 
-    public SQLiteDelegate(ISqlite iSqlite){
-        super(mAppCtx, iSqlite.dbPath()+iSqlite.dbName()+".DB", null, iSqlite.version());
+    public SQLiteDelegate(ITabInfo iSqlite, IDbinfo iUpgrade){
+        super(mAppCtx, iUpgrade.getKey()+".DB", null, iUpgrade.version());
         this.sqlite = iSqlite;
+        this.upgrade = iUpgrade;
         if (mAppCtx == null){
             throw new RuntimeException("请先调用"+getClass()+"里的 init 方法");
         }
@@ -41,7 +46,7 @@ public class SQLiteDelegate extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        sqlite.onUpgrade(db,oldVersion,newVersion);
+        upgrade.onUpgrade(db,oldVersion,newVersion);
     }
 
     /**

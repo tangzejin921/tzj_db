@@ -47,10 +47,10 @@ class TzjDBPlugin {
     _map.clear();
   }
 
-  /// 调用平台，创建/打开数据库，如果需要更新则会同过
-  Future<Null> _init() async {
-    return await _channel.invokeMethod('init', _baseDB.dbInfo());
-  }
+//  /// 调用平台，创建/打开数据库，如果需要更新则会同过
+//  Future<Null> _init() async {
+//    return await _channel.invokeMethod('init', _baseDB.dbInfo());
+//  }
 
   Future<int> insert() async {
     return await _channel.invokeMethod('insert', _baseDB.dbInfo());

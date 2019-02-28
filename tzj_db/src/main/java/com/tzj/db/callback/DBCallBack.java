@@ -1,11 +1,13 @@
-package com.tzj.db;
+package com.tzj.db.callback;
+
+import com.tzj.db.BaseDB;
 
 import java.util.List;
 
 /**
  * Created by tzj on 2018/5/28.
  */
-public abstract class DBCallBack<T extends BaseDB> implements ICallBack<T>{
+public abstract class DBCallBack<T extends BaseDB> implements ICallBack<T> {
     public abstract void onResult(List<T> list, long idRoNum);
     @Override
     public void result(List<T> list, long idRoNum) {

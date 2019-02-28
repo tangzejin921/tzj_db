@@ -1,4 +1,6 @@
-package com.tzj.db;
+package com.tzj.db.callback;
+
+import com.tzj.db.BaseDB;
 
 import java.util.List;
 

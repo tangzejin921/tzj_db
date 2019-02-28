@@ -18,6 +18,10 @@ import java.util.Map;
  * Created by tzj on 2018/5/21.
  */
 public class BaseReflex {
+    /**
+     * key-原生情况下是 Class
+     * key-Flutter  情况下是 dbPath()+dbName()+tabName()
+     */
     @FieldTag(type = FieldType.ignore)
     public static Map<Object,List<SqlField>> sqlFiles = new HashMap<>();
 

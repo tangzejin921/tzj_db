@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tzj.db.DBCallBack;
+
+import com.tzj.db.callback.DBCallBack;
 
 import java.util.Date;
 import java.util.List;

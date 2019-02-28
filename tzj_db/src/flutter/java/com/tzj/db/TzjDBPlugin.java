@@ -3,6 +3,8 @@ package com.tzj.db;
 import android.app.Activity;
 
 
+import com.tzj.db.callback.ICallBack;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,17 +38,16 @@ public class TzjDBPlugin implements MethodChannel.MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall methodCall, final MethodChannel.Result result) {
         try {
-            DBInfo dbInfo = new DBInfo(methodCall);
+            DBInfo dbInfo = new DBInfo(methodCall,channel);
 
             FlutterDB flutterDB  =  map.get(dbInfo.getKey());
             if (flutterDB!=null){
                 flutterDB.setDbInfo(dbInfo);
+            }else{
+                flutterDB = new FlutterDB(dbInfo);
+                map.put(dbInfo.getKey(),flutterDB);
             }
             switch (methodCall.method) {
-                case "init"://返回
-                    flutterDB = new FlutterDB(dbInfo,channel);
-                    map.put(dbInfo.getKey(),flutterDB);
-                    break;
                 case "insert":
                     flutterDB.where()
                             .insert(new ICallBack() {

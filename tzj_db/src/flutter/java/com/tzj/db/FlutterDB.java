@@ -5,8 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-import com.tzj.db.annotations.FieldTag;
-import com.tzj.db.annotations.FieldType;
+import com.tzj.db.info.IDbinfo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,52 +14,47 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.flutter.plugin.common.MethodChannel;
-
 public class FlutterDB extends BaseDB {
 
-    @FieldTag(type = FieldType.ignore)
-    private DBInfo dbInfo;
-
     public void setDbInfo(DBInfo dbInfo) {
-        this.dbInfo = dbInfo;
+        this.dbinfo = dbInfo;
     }
 
     public DBInfo getDbInfo() {
-        return dbInfo;
+        return (DBInfo) dbinfo;
     }
 
-    @FieldTag(type = FieldType.ignore)
-    private MethodChannel channel;
 
+    /**
+     * copy 作为实体类用
+     */
     private FlutterDB(FlutterDB flutterDB) {
         super(null);
-        this.dbInfo = flutterDB.dbInfo;
+        this.dbinfo = new DBInfo(flutterDB.getDbInfo());
     }
 
-    public FlutterDB(Object obj, MethodChannel channel) {
-        super(obj);
-        this.channel = channel;
-        dbInfo = (DBInfo) obj;
+    public FlutterDB(Object obj) {
+        super(null);
+        dbinfo = (DBInfo) obj;
         if (getDbHelper() == null) {
-            map.put(dbPath() + dbName(), new SQLiteDelegate(this));
+            map.put(dbinfo.getKey(), new SQLiteDelegate(this,dbinfo));
         }
     }
 
     public Where where() {
-        return super.where(dbInfo.getWhere(), dbInfo.getValues())
-                .orderBy(dbInfo.getOrderBy())
-                .desc(dbInfo.isDesc())
-                .limit(dbInfo.getLimit());
+        return super.where(getDbInfo().getWhere(), getDbInfo().getValues())
+                .orderBy(getDbInfo().getOrderBy())
+                .desc(getDbInfo().isDesc())
+                .limit(getDbInfo().getLimit());
     }
 
     @Override
     protected Map<String, Object> toValue(Class<?> c) {
         Map<String, Object> map = new HashMap<>();
-        List<SqlField> sqlFields = sqlFiles.get(dbPath() + dbName() + tabName());
+        List<SqlField> sqlFields = sqlFiles.get(dbinfo.getKey() + tabName());
         for (SqlField sf : sqlFields) {
             try {
-                Object value = dbInfo.getFields().get(sf.getName());
+                Object value = getDbInfo().getFields().get(sf.getName());
                 if (value instanceof Date) {
                     value = ((Date) value).getTime();
                 }
@@ -90,71 +84,38 @@ public class FlutterDB extends BaseDB {
 
     //=========================================
     @Override
-    public String dbPath() {
-        return dbInfo.getDbPath();
-    }
-
-    @Override
-    public String dbName() {
-        return dbInfo.getDbName();
-    }
-
-    @Override
     public String tabName() {
-        return dbInfo.getTabName();
-    }
-
-    @Override
-    public int version() {
-        return dbInfo.getVersion();
+        return getDbInfo().getTabName();
     }
 
     @Override
     public void initFields() {
-        if (sqlFiles.get(dbPath() + dbName() + tabName()) == null) {
+        if (sqlFiles.get(dbinfo.getKey() + tabName()) == null) {
             initField(getClass());
         }
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String tab = createSql(tabName(), sqlFiles.get(dbPath() + dbName() + tabName()));
+        String tab = createSql(tabName(), sqlFiles.get(dbinfo.getKey() + tabName()));
         db.execSQL(tab);
     }
 
+
     @Override
-    public void onUpgrade(final SQLiteDatabase db, int oldVersion, int newVersion) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("dbPath", dbPath());
-        map.put("dbName", dbName());
-        map.put("oldVersion", oldVersion);
-        map.put("newVersion", newVersion);
-        channel.invokeMethod("onUpgrade", map, new MethodChannel.Result() {
-            @Override
-            public void success(Object o) {
-                String sql = (String) o;
-                db.execSQL(sql);
-            }
-
-            @Override
-            public void error(String s, String s1, Object o) {
-                //TODO
-            }
-
-            @Override
-            public void notImplemented() {
-                //TODO
-            }
-        });
-
+    public IDbinfo upgrade() {
+        //这里没意义
+        return dbinfo;
     }
+
     //=========================================
 
     /**
      * 初始化这个类
      */
+    @Override
     protected List<SqlField> initField(Class<?> c) {
-        List<SqlField> sqlFieldList = sqlFiles.get(dbPath() + dbName() + tabName());
+        List<SqlField> sqlFieldList = sqlFiles.get(dbinfo.getKey() + tabName());
         if (sqlFieldList == null) {
             sqlFieldList = new ArrayList<>();
             //id
@@ -165,7 +126,7 @@ public class FlutterDB extends BaseDB {
             id.setType(Date.class);
             sqlFieldList.add(id);
             //flutter 传过来的
-            Iterator<Map.Entry<String, Object>> iterator = dbInfo.getFields().entrySet().iterator();
+            Iterator<Map.Entry<String, Object>> iterator = getDbInfo().getFields().entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> next = iterator.next();
                 String name = next.getKey();
@@ -196,7 +157,7 @@ public class FlutterDB extends BaseDB {
                 sqlField.setType(type);
                 sqlFieldList.add(sqlField);
             }
-            sqlFiles.put(dbPath() + dbName() + tabName(), sqlFieldList);
+            sqlFiles.put(dbinfo.getKey() + tabName(), sqlFieldList);
         }
         return sqlFieldList;
     }
@@ -207,17 +168,18 @@ public class FlutterDB extends BaseDB {
             return;
         }
         FlutterDB flutterDB = (FlutterDB) obj;
-        List<SqlField> sqlFields = sqlFiles.get(dbPath() + dbName() + tabName());
+        List<SqlField> sqlFields = sqlFiles.get(dbinfo.getKey() + tabName());
         for (SqlField sf : sqlFields) {
             try {
                 Object value = sf.getCursorValue(cursor);
                 if (value instanceof Date){
                     value = ((Date)value).getTime();
                 }
-                flutterDB.dbInfo.getFields().put(sf.getName(), value);
+                flutterDB.getDbInfo().getFields().put(sf.getName(), value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 }

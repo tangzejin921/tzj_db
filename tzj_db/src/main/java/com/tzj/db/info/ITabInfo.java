@@ -1,4 +1,4 @@
-package com.tzj.db;
+package com.tzj.db.info;
 
 
 import android.database.sqlite.SQLiteDatabase;
@@ -7,18 +7,19 @@ import android.database.sqlite.SQLiteDatabase;
  * Created by tzj on 2018/5/21.
  */
 
-public interface ISqlite {
+public interface ITabInfo {
 
     void initFields();
-    int version();
-    String dbPath();
-    String dbName();
 
     String tabName();
 
     void onCreate(SQLiteDatabase db);
-    void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
 
+    /**
+     * 任何一个表调用将关闭数据库
+     */
     void close();
+
+    IDbinfo upgrade();
 
 }
