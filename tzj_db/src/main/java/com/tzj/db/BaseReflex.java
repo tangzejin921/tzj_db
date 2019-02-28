@@ -41,8 +41,8 @@ public class BaseReflex {
         Field[] fields = c.getDeclaredFields();
         if (fields != null && fields.length > 0) {
             for (Field field : fields) {
-                int modifiers = field.getModifiers();
-                if ((modifiers & Modifier.STATIC) > 0) {
+                //去除 static
+                if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
                 field.setAccessible(true);

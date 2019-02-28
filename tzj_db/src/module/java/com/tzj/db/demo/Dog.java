@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Dog extends BaseDB {
+    public static String stat = "static";
     public String name = "刚出生";
     private int age;
     private boolean isMe;
