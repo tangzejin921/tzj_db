@@ -26,6 +26,9 @@ public class BaseDB extends DBHelper {
      * 不管有没有直接插入
      */
     public static <T extends BaseDB> void insertAll(List<T> list){
+        if (list == null){
+            return;
+        }
         for (T t:list) {
             t.insert(null);
         }
