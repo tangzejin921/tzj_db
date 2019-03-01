@@ -108,6 +108,10 @@ public class BaseReflex {
     protected Map<String, Object> toValue(Class<?> c) {
         Map<String, Object> map = new HashMap<>();
         List<SqlField> sqlFields = sqlFiles.get(c);
+        //可能出现 NUll，TODO 猜测是 fastJson 导致的，没具体验证
+        if (sqlFields == null){
+            sqlFields = initField(c);
+        }
         for (SqlField sf:sqlFields) {
             try {
                 Field field = getField(c,sf.getName());
@@ -130,6 +134,9 @@ public class BaseReflex {
      */
     protected void filling(Object obj, Class c, Cursor cursor) {
         List<SqlField> sqlFields = sqlFiles.get(c);
+        if (sqlFields == null){
+            sqlFields = initField(c);
+        }
         for (SqlField sf:sqlFields) {
             try {
                 Field field = getField(c,sf.getName());
