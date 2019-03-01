@@ -82,7 +82,11 @@ public class BaseReflex {
                     if (initValue instanceof Date){
                         initValue = "(now())";
                     }else if (initValue instanceof String && TextUtils.isEmpty((String)initValue)){
-                        initValue = "''";
+                        if (TextUtils.isEmpty((String)initValue)){
+                            initValue = "''";
+                        }else{
+                            initValue = "'"+initValue+"'";//这里防止字符串里有特殊字符 如 ,
+                        }
                     }
                     sqlType += " default "+initValue;
                 }
