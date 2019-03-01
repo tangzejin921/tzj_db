@@ -99,7 +99,7 @@ public class BaseDB extends DBHelper {
         String sql = null;
         if (TextUtils.isEmpty(where)) {
             sql = "select count(_id) from " + tabName();
-        } else if (where.contains("=") || where.contains(">") || where.contains("<")){
+        } else if (addWhere(where)){
             sql = "select count(_id) from " + tabName() + " where " + where;
         }else{
             sql = "select count(_id) from " + tabName() + " " + where;
@@ -119,7 +119,7 @@ public class BaseDB extends DBHelper {
         String sql = null;
         if (TextUtils.isEmpty(where)) {
             sql = "select * from " + tabName() + " limit 1";
-        } else if (where.contains("=") || where.contains(">") || where.contains("<")){
+        } else if (addWhere(where)){
             sql = "select * from " + tabName() + " where " + where + " limit 1";
         } else {
             sql = "select * from " + tabName() + " " + where + " limit 1";
@@ -156,7 +156,7 @@ public class BaseDB extends DBHelper {
         String sql = null;
         if (TextUtils.isEmpty(where)) {
             sql = "select * from " + tabName();
-        } else if (where.contains("=") || where.contains(">") || where.contains("<")){
+        } else if (addWhere(where)){
             sql = "select * from " + tabName() + " where " + where;
         } else {
             sql = "select * from " + tabName() + " " + where;
@@ -218,5 +218,9 @@ public class BaseDB extends DBHelper {
         }
         cursor.close();
         return ret;
+    }
+
+    private boolean addWhere(String where){
+        return where.contains("=") || where.contains(">") || where.contains("<") || where.toLowerCase().contains("like");
     }
 }
