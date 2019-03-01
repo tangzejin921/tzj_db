@@ -81,7 +81,7 @@ public class BaseReflex {
                 if (initValue != null){
                     if (initValue instanceof Date){
                         initValue = "(now())";
-                    }else if (initValue instanceof String && TextUtils.isEmpty((String)initValue)){
+                    }else if (initValue instanceof String){
                         if (TextUtils.isEmpty((String)initValue)){
                             initValue = "''";
                         }else{
