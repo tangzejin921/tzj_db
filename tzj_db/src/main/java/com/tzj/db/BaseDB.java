@@ -70,6 +70,12 @@ public class BaseDB extends DBHelper {
     }
 
     /**
+     * 删除所有
+     */
+    public int deleteAll() {
+        return getDbHelper().getWritableDatabase().delete(tabName(), "_id <> ?", new String[]{""});
+    }
+    /**
      * 转化为 where
      */
     public Where where(String where, Object... data) {
