@@ -22,7 +22,14 @@ public class BaseDB extends DBHelper {
     public long insert(String where, Object... data) {
         return insert(null, where, data);
     }
-
+    /**
+     * 不管有没有直接插入
+     */
+    public static <T extends BaseDB> void insertAll(List<T> list){
+        for (T t:list) {
+            t.insert(null);
+        }
+    }
     /**
      * 增
      * 有所给条件的内容的话改为update
