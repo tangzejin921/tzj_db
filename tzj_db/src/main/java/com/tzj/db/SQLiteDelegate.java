@@ -35,6 +35,7 @@ public class SQLiteDelegate extends SQLiteOpenHelper {
      */
     public void onTab(ITabInfo tab){
         if (!tab.initFields()){
+            //这里调用后将会调用到 onUpgrade
             SQLiteDatabase db = getWritableDatabase();
             if (!isExist(db,tab.tabName())){
                 tab.onCreate(db);

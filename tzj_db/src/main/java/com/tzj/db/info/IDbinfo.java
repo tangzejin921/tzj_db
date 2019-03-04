@@ -16,5 +16,8 @@ public interface IDbinfo {
     int version();
     String getKey();
 
+    /**
+     * 新建的表可以不用处理
+     */
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
 }

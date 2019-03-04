@@ -58,7 +58,7 @@ public class BaseDB extends DBHelper {
                 }
             }
             if (count(where, temp) > 0) {
-                return update(where, temp);
+                return update(values,where, temp);
             }
         }
         return getDbHelper().getWritableDatabase().insert(tabName(), null, values);
@@ -67,7 +67,7 @@ public class BaseDB extends DBHelper {
     /**
      * 删
      *
-     * @param where 为NULL时删除_id
+     * @param where 为NULL时删除_id ,不要加 where
      * @param data
      * @return: void
      */
@@ -181,7 +181,7 @@ public class BaseDB extends DBHelper {
     /**
      * 改
      *
-     * @param where 不能为空
+     * @param where 不能为空 并且不能加 where
      */
     public int update(ContentValues values, String where, String... data) {
         if (values == null) {
@@ -222,6 +222,7 @@ public class BaseDB extends DBHelper {
     }
 
     private boolean addWhere(String where){
-        return where.contains("=") || where.contains(">") || where.contains("<") || where.toLowerCase().contains("like");
+        where = where.toLowerCase();
+        return !where.startsWith("where") && (where.contains("=") || where.contains(">") || where.contains("<") || where.contains("like"));
     }
 }
