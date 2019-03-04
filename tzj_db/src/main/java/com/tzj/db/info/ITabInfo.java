@@ -9,7 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 public interface ITabInfo {
 
-    void initFields();
+    /**
+     * @return 是否已经初始化过了
+     */
+    boolean initFields();
 
     String tabName();
 

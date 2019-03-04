@@ -8,42 +8,56 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.tzj.db.info.IDbinfo;
 import com.tzj.db.info.ITabInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by tzj on 2018/5/21.
+ * 每张表会产生一个实例
  */
 public class SQLiteDelegate extends SQLiteOpenHelper {
     private static Context mAppCtx;
     public static void init(Context ctx){
         mAppCtx = ctx.getApplicationContext();
     }
-    private ITabInfo sqlite;
+
+//    private ITabInfo tabInfo;
     private IDbinfo upgrade;
 
-    public SQLiteDelegate(ITabInfo iSqlite, IDbinfo iUpgrade){
+    public SQLiteDelegate(ITabInfo tabInfo, IDbinfo iUpgrade){
         super(mAppCtx, iUpgrade.getKey()+".DB", null, iUpgrade.version());
-        this.sqlite = iSqlite;
+//        this.tabInfo = tabInfo;
         this.upgrade = iUpgrade;
         if (mAppCtx == null){
             throw new RuntimeException("请先调用"+getClass()+"里的 init 方法");
         }
     }
 
-    @Override
-    public void onConfigure(SQLiteDatabase db) {
-        sqlite.initFields();
-        super.onConfigure(db);
-        if (!isExist(db,sqlite.tabName())){
-            onCreate(db);
+    /**
+     * 代替 onConfigure onCreate
+     */
+    public void onTab(ITabInfo tab){
+        if (!tab.initFields()){
+            SQLiteDatabase db = getWritableDatabase();
+            if (!isExist(db,tab.tabName())){
+                tab.onCreate(db);
+            }
         }
     }
 
+//    @Override
+//    public void onConfigure(SQLiteDatabase db) {
+//        tabInfo.initFields();
+//        super.onConfigure(db);
+//        onCreate(db);
+//    }
+    @Deprecated
     @Override
     public void onCreate(SQLiteDatabase db) {
-        sqlite.onCreate(db);
+        //被 onTab 代替了
+//        //这里可能会被调两次
+//        if (isExist(db,tabInfo.tabName())){
+//            tabInfo.onCreate(db);
+//        }
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         upgrade.onUpgrade(db,oldVersion,newVersion);
@@ -54,22 +68,15 @@ public class SQLiteDelegate extends SQLiteOpenHelper {
      */
     private boolean isExist(SQLiteDatabase db,String tableName){
         db.beginTransaction();
-        List<String> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master where type='table'",new String[]{});
-        while (cursor.moveToNext()){
-            String temp = cursor.getString(0);
-            list.add(temp);
+        Cursor cursor = db.rawQuery("SELECT count(name) FROM sqlite_master where name=?",new String[]{tableName});
+        int columnIndex = cursor.getColumnIndex("count(name)");
+        int count = 0;
+        if (cursor.moveToNext()){
+            count = cursor.getInt(columnIndex);
         }
-        list.remove("sqlite_sequence");
-        list.remove("android_metadata");
         cursor.close();
         db.endTransaction();
-        //第一次 或者 已经创建了表
-        if (list.size() == 0 || list.contains(tableName)){
-            return true;
-        }else{
-            return false;
-        }
+        return count > 0;
     }
 
 }

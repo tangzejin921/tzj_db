@@ -25,9 +25,11 @@ public class DBHelper extends BaseReflex implements ITabInfo {
     protected Date _id = new Date();//必定有一个_id 为插入时间
     public DBHelper() {
         dbinfo = upgrade();
-        if (getDbHelper() == null) {
-            map.put(dbinfo.getKey(), new SQLiteDelegate(this, dbinfo));
+        SQLiteDelegate dbHelper = getDbHelper();
+        if (dbHelper == null) {
+            map.put(dbinfo.getKey(), dbHelper = new SQLiteDelegate(this, dbinfo));
         }
+        dbHelper.onTab(this);
     }
 
     public DBHelper(Object obj) {
@@ -41,9 +43,12 @@ public class DBHelper extends BaseReflex implements ITabInfo {
 
     //=======================================================
     @Override
-    public void initFields() {
+    public boolean initFields() {
         if (sqlFiles.get(getClass()) == null) {
             initField(getClass());
+            return false;
+        }else{
+            return true;
         }
     }
 

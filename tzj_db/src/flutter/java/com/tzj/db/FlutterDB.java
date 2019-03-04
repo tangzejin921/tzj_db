@@ -36,9 +36,11 @@ public class FlutterDB extends BaseDB {
     public FlutterDB(Object obj) {
         super(null);
         dbinfo = (DBInfo) obj;
-        if (getDbHelper() == null) {
-            map.put(dbinfo.getKey(), new SQLiteDelegate(this,dbinfo));
+        SQLiteDelegate dbHelper = getDbHelper();
+        if (dbHelper == null) {
+            map.put(dbinfo.getKey(), dbHelper = new SQLiteDelegate(this, dbinfo));
         }
+        dbHelper.onTab(this);
     }
 
     public Where where() {
@@ -89,9 +91,12 @@ public class FlutterDB extends BaseDB {
     }
 
     @Override
-    public void initFields() {
+    public boolean initFields() {
         if (sqlFiles.get(dbinfo.getKey() + tabName()) == null) {
             initField(getClass());
+            return false;
+        }else{
+            return true;
         }
     }
 

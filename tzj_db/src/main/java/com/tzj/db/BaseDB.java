@@ -105,9 +105,11 @@ public class BaseDB extends DBHelper {
             sql = "select count(_id) from " + tabName() + " " + where;
         }
         Cursor cursor = getDbHelper().getReadableDatabase().rawQuery(sql, data);
-        cursor.moveToNext();
-        int columnIndex = cursor.getColumnIndex("count(_id)");
-        int anInt = cursor.getInt(columnIndex);
+        int anInt = 0;
+        if(cursor.moveToNext()){
+            int columnIndex = cursor.getColumnIndex("count(_id)");
+            anInt = cursor.getInt(columnIndex);
+        }
         cursor.close();
         return anInt;
     }
@@ -195,7 +197,6 @@ public class BaseDB extends DBHelper {
      * 类转化为 ContentValues
      */
     protected ContentValues contentValues(){
-        getDbHelper().getWritableDatabase();//
         Map<String, Object> map = toValue(getClass());
         Parcel obtain = Parcel.obtain();
         obtain.writeMap(map);
