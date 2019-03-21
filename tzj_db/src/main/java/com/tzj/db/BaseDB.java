@@ -53,9 +53,7 @@ public class BaseDB extends DBHelper {
             String[] temp = null;
             if (strs != null) {
                 temp = new String[strs.length];
-                for (int i = 0; i < strs.length; i++) {
-                    temp[i] = strs[i].toString();
-                }
+                System.arraycopy(strs,0,temp,0,strs.length);
             }
             if (count(where, temp) > 0) {
                 return update(values,where, temp);

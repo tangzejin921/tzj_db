@@ -25,6 +25,9 @@ public class DBHelper extends BaseReflex implements ITabInfo {
     protected Date _id = new Date();//必定有一个_id 为插入时间
     public DBHelper() {
         dbinfo = upgrade();
+        if (dbinfo == null){
+            return;
+        }
         SQLiteDelegate dbHelper = getDbHelper();
         if (dbHelper == null) {
             map.put(dbinfo.getKey(), dbHelper = new SQLiteDelegate(this, dbinfo));
