@@ -150,12 +150,16 @@ public class BaseReflex {
     }
 
     private Field getField(Class c,String name){
-        try {
-            Field field = c.getDeclaredField(name);
-            return field;
-        } catch (NoSuchFieldException e) {
-            return getField(c.getSuperclass(),name);
+        Field field = null;
+        Class temp = c;
+        while (field == null && c != BaseReflex.class){
+            try {
+                field = temp.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                temp = c.getSuperclass();
+            }
         }
+        return field;
     }
 
     public static class SqlField {
