@@ -152,11 +152,11 @@ public class BaseReflex {
     private Field getField(Class c,String name){
         Field field = null;
         Class temp = c;
-        while (field == null && c != BaseReflex.class){
+        while (field == null && temp != BaseReflex.class){
             try {
                 field = temp.getDeclaredField(name);
             } catch (NoSuchFieldException e) {
-                temp = c.getSuperclass();
+                temp = temp.getSuperclass();
             }
         }
         return field;
