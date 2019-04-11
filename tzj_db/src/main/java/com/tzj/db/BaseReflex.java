@@ -115,6 +115,9 @@ public class BaseReflex {
         for (SqlField sf:sqlFields) {
             try {
                 Field field = getField(c,sf.getName());
+                if (field == null){
+                    continue;
+                }
                 field.setAccessible(true);
                 Object value = field.get(this);
                 if (value instanceof Date){
