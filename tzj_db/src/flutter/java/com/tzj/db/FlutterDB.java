@@ -51,7 +51,7 @@ public class FlutterDB extends BaseDB {
     }
 
     @Override
-    protected Map<String, Object> toValue(Class<?> c) {
+    protected ContentValues toValue(Class<?> c) {
         Map<String, Object> map = new HashMap<>();
         List<SqlField> sqlFields = sqlFiles.get(dbinfo.getKey() + tabName());
         for (SqlField sf : sqlFields) {
@@ -60,7 +60,7 @@ public class FlutterDB extends BaseDB {
                 if (value instanceof Date) {
                     value = ((Date) value).getTime();
                 }
-                map.put(sf.getName(), value);
+                addToContentValue(map,sf.getName(),value);
             } catch (Exception e) {
                 e.printStackTrace();
             }

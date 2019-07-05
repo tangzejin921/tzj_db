@@ -1,5 +1,6 @@
 package com.tzj.db;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
 
@@ -105,8 +106,8 @@ public class BaseReflex {
     /**
      * 将类转成map<name,value>
      */
-    protected Map<String, Object> toValue(Class<?> c) {
-        Map<String, Object> map = new HashMap<>();
+    protected ContentValues toValue(Class<?> c) {
+        ContentValues map = new ContentValues();
         List<SqlField> sqlFields = sqlFiles.get(c);
         //可能出现 NUll，TODO 猜测是 fastJson 导致的，没具体验证
         if (sqlFields == null){
@@ -123,7 +124,7 @@ public class BaseReflex {
                 if (value instanceof Date){
                     value = ((Date) value).getTime();
                 }
-                map.put(sf.getName(), value);
+                addToContentValue(map,sf.getName(),value);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -246,6 +247,36 @@ public class BaseReflex {
             }
             return value;
         }
+    }
+
+    /**
+     * android 29 通过 Parcel 加入失败。
+     * 加入ContentValues
+     */
+    public static boolean addToContentValue(ContentValues values,String key,Object obj){
+        if (obj == null){
+            return false;
+        }
+        if (obj instanceof String){
+            values.put(key,(String) obj);
+        }else if (obj instanceof Integer){
+            values.put(key,(Integer) obj);
+        }else if (obj instanceof Boolean){
+            values.put(key,(Boolean) obj);
+        }else if (obj instanceof Byte){
+            values.put(key,(Byte) obj);
+        }else if (obj instanceof Float){
+            values.put(key,(Float) obj);
+        }else if (obj instanceof Long){
+            values.put(key,(Long) obj);
+        }else if (obj instanceof Double){
+            values.put(key,(Double) obj);
+        }else if (obj instanceof Date){
+            values.put(key,((Date)obj).getTime());
+        }else{
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args){

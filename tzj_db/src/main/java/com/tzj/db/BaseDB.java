@@ -195,13 +195,14 @@ public class BaseDB extends DBHelper {
      * 类转化为 ContentValues
      */
     protected ContentValues contentValues(){
-        Map<String, Object> map = toValue(getClass());
-        Parcel obtain = Parcel.obtain();
-        obtain.writeMap(map);
-        obtain.setDataPosition(0);
-        ContentValues values = ContentValues.CREATOR.createFromParcel(obtain);
-        obtain.recycle();
-        return values;
+//        Map<String, Object> map = toValue(getClass());
+//        Parcel obtain = Parcel.obtain();
+//        obtain.writeMap(map);
+//        obtain.setDataPosition(0);
+//        ContentValues values = ContentValues.CREATOR.createFromParcel(obtain);
+//        obtain.recycle();
+//        return values;
+        return toValue(getClass());
     }
 
     protected <T extends BaseDB> List<T> toList(Cursor cursor){
