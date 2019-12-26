@@ -9,7 +9,7 @@ import com.tzj.db.info.IDbinfo;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import android.content.ContentValues;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class FlutterDB extends BaseDB {
 
     @Override
     protected ContentValues toValue(Class<?> c) {
-        Map<String, Object> map = new HashMap<>();
+        ContentValues map = new ContentValues();
         List<SqlField> sqlFields = sqlFiles.get(dbinfo.getKey() + tabName());
         for (SqlField sf : sqlFields) {
             try {
